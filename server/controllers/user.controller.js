@@ -18,6 +18,8 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   const { email, password } = req.body;
 
   try {

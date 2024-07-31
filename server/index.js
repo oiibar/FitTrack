@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://gym-cli.onrender.com"],
+    origin: ["https://fit-track-cli.vercel.app"],
     credentials: true,
     optionsSuccessStatus: 200,
   })
