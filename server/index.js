@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://gym-client-livid.vercel.app/"],
+    origin: ["https://gym-client-livid.vercel.app"],
     credentials: true,
     optionsSuccessStatus: 200,
   })
