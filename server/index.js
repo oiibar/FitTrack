@@ -11,8 +11,6 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["https://fit-track-cli.vercel.app"],
-    credentials: true,
-    optionsSuccessStatus: 200,
   })
 );
 
