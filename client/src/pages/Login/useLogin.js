@@ -11,7 +11,7 @@ export const useLogin = () => {
       const response = await fetch(`${BASE_URL}/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: "include", // Ensure credentials are included
         body: JSON.stringify({ email, password }),
       });
 
