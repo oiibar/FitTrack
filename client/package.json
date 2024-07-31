@@ -1,5 +1,5 @@
 {
-  "proxy": "https://gym-serv.onrender.com",
+  "proxy": "https://fit-track-serv.vercel.app",
   "name": "client",
   "private": true,
   "version": "0.0.0",
