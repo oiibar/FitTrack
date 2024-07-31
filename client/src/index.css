@@ -4,31 +4,19 @@
 
 @layer base {
   body {
-    @apply text-sm font-roboto;
-  }
-  td {
-    @apply capitalize text-white/70;
-  }
-  thead td {
-    @apply text-white;
+    @apply font-roboto text-white;
   }
 }
 
 @layer components {
   .btn {
-    @apply block gap-2 items-center text-sm text-white py-2 px-4 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400;
+    @apply flex gap-2 items-center text-center justify-center p-2 rounded-md;
   }
   .input {
-    @apply bg-transparent p-2 border bg-slate-700 placeholder:text-white placeholder:text-sm rounded-md outline-none focus:border-slate-300;
+    @apply bg-transparent p-2 border bg-slate-700 placeholder:text-white rounded-md outline-none focus:border-slate-300;
   }
   .container {
     @apply max-w-[1000px] mx-auto;
-  }
-  .workouts {
-    @apply flex flex-wrap items-center text-center justify-center gap-4 w-full;
-  }
-  .workout {
-    @apply flex flex-col w-1/4 max-md:w-full gap-2 p-4 bg-slate-800 rounded-md;
   }
 }
 

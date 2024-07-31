@@ -4,7 +4,6 @@ import { WorkoutsContextProvider } from "./context/workout.context.jsx";
 import { AuthContextProvider } from "./context/auth.context.jsx";
 
 function App() {
-  //axios.defaults.withCredentials = true;
   return (
     <AuthContextProvider>
       <WorkoutsContextProvider>
