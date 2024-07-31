@@ -13,7 +13,7 @@
     @apply flex gap-2 items-center text-center justify-center p-2 rounded-md;
   }
   .input {
-    @apply bg-transparent p-2 border bg-slate-700 placeholder:text-white rounded-md outline-none focus:border-slate-300;
+    @apply bg-transparent p-2 border bg-slate-700 placeholder:text-gray-400 rounded-md outline-none focus:border-slate-300;
   }
   .container {
     @apply max-w-[1000px] mx-auto;

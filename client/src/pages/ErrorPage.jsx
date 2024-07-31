@@ -9,7 +9,7 @@ const ErrorPage = () => {
         to={"/login"}
         className="bg-sky-500 rounded-md px-6 py-2 hover:bg-sky-600"
       >
-        Back
+        Home
       </Link>
     </div>
   );

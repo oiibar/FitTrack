@@ -1,19 +1,15 @@
 import React from "react";
-import { formatDate } from "./../helpers/date.helper";
 import { FaTrash } from "react-icons/fa";
-import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { BASE_URL } from "../apiurl";
+import { useWorkoutsContext } from "../../../hooks/useWorkoutsContext";
+import { useAuthContext } from "../../../hooks/useAuthContext";
+import { BASE_URL } from "../../../apiurl";
+import { formatDate } from "../helpers/date.helper";
 
 const Workout = ({ workout }) => {
   const { dispatch } = useWorkoutsContext();
   const { user } = useAuthContext();
 
   const handleDelete = async () => {
-    if (!user) {
-      return;
-    }
-
     const response = await fetch(`${BASE_URL}/workouts/${workout._id}`, {
       method: "DELETE",
       headers: {

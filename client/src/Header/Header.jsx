@@ -1,17 +1,12 @@
 import { FaDumbbell } from "react-icons/fa6";
-import { Link, useNavigate } from "react-router-dom";
-import { useLogout } from "../hooks/useLogout.js";
-import { useAuthContext } from "../hooks/useAuthContext.js";
+import { Link } from "react-router-dom";
+import { memo } from "react";
+import { useLogout } from "./useLogout";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Header = () => {
   const { logout } = useLogout();
   const { user } = useAuthContext();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
 
   return (
     <header className="flex items-center p-4 bg-slate-800 backdrop-blur-sm justify-between">
@@ -23,7 +18,7 @@ const Header = () => {
           <div className="flex gap-2 items-center">
             <span>{user.email}</span>
             <button
-              onClick={handleLogout}
+              onClick={() => logout()}
               className="bg-red-600 rounded-xl px-4 py-2"
             >
               Log Out
@@ -40,4 +35,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default memo(Header);

@@ -16,6 +16,8 @@ app.use(
   })
 );
 
+//https://gym-cli.onrender.com
+
 app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();

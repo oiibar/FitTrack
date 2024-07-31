@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAuthContext } from "./useAuthContext";
-import { BASE_URL } from "../apiurl";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { BASE_URL } from "../../apiurl";
 
 export const useLogin = () => {
   const [error, setError] = useState(null);
