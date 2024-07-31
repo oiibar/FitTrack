@@ -1,7 +1,3 @@
-import { useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { BASE_URL } from "../../apiurl";
-
 export const useLogin = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +11,7 @@ export const useLogin = () => {
       const response = await fetch(`${BASE_URL}/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -38,3 +35,5 @@ export const useLogin = () => {
 
   return { login, isLoading, error };
 };
+
+export const BASE_URL = "https://fit-track-serv.vercel.app/api";
