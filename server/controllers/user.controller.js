@@ -7,7 +7,10 @@ const createToken = (_id) => {
 
 const signup = async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://fit-track-cli.vercel.app"
+  );
   const { email, password } = req.body;
 
   try {
@@ -21,7 +24,10 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://fit-track-cli.vercel.app"
+  );
   const { email, password } = req.body;
 
   try {

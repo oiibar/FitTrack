@@ -7,13 +7,13 @@ import cors from "cors";
 const PORT = 5000;
 const app = express();
 app.use(express.json());
-const corsOptions = {
-  origin: "https://fit-track-cli.vercel.app",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: ["https://fit-track-cli.vercel.app"],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 //https://fit-track-cli.vercel.app
 
