@@ -9,12 +9,12 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://fit-track-gamma.vercel.app/api"],
+    origin: "https://fit-track-gamma.vercel.app",
     credentials: true,
     optionsSuccessStatus: 200,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
 //https://fit-track-cli.vercel.app
 
 // app.use((req, res, next) => {
