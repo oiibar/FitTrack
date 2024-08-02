@@ -17,12 +17,12 @@ app.use(
 
 //https://fit-track-cli.vercel.app
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  console.log(req.path, req.method);
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   console.log(req.path, req.method);
+//   next();
+// });
 
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/user", userRoutes);
