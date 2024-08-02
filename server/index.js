@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://fit-track-cli.vercel.app"],
+    origin: ["https://fit-track-cli.vercel.app/api"],
     credentials: true,
     optionsSuccessStatus: 200,
   })
