@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 import { useWorkoutsContext } from "../../../hooks/useWorkoutsContext";
+import axios from "axios";
 import { BASE_URL } from "../../../apiurl";
+import { toast } from "react-toastify";
 
 const WorkoutForm = ({ onFormSubmit }) => {
   const { dispatch } = useWorkoutsContext();
@@ -27,6 +29,7 @@ const WorkoutForm = ({ onFormSubmit }) => {
     if (newEmptyFields.length) {
       setEmptyFields(newEmptyFields);
       setError("Please fill in all required fields.");
+      toast.error("Please fill in all required fields.");
       return false;
     }
     setEmptyFields([]);
@@ -39,27 +42,26 @@ const WorkoutForm = ({ onFormSubmit }) => {
 
     if (!validateForm()) return;
 
-    const response = await fetch(`${BASE_URL}/workouts`, {
-      method: "POST",
-      body: JSON.stringify(formState),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    try {
+      const response = await axios.post(`${BASE_URL}/workouts`, formState, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
 
-    const json = await response.json();
-
-    if (!response.ok) {
-      setError(json.error);
-      setEmptyFields(json.emptyFields || []);
-    } else {
+      dispatch({ type: "ADD_WORKOUT", payload: response.data });
+      toast.success("Workout added successfully");
       setFormState({ title: "", weight: "", type: "", sets: "", reps: "" });
       setError(null);
       setEmptyFields([]);
       if (onFormSubmit) {
         onFormSubmit();
       }
+    } catch (error) {
+      setError(error.response?.data?.error || error.message);
+      setEmptyFields(error.response?.data?.emptyFields || []);
+      toast.error("Login first to add a workout");
     }
   };
 
@@ -97,10 +99,6 @@ const WorkoutForm = ({ onFormSubmit }) => {
         <button type="submit" className="btn btn-green">
           Submit
         </button>
-
-        {error && (
-          <div className="error mt-4 text-red-500 col-span-2">{error}</div>
-        )}
       </form>
     </div>
   );

@@ -2,28 +2,31 @@ import React from "react";
 import { FaTrash } from "react-icons/fa";
 import { useWorkoutsContext } from "../../../hooks/useWorkoutsContext";
 import { useAuthContext } from "../../../hooks/useAuthContext";
+import axios from "axios";
 import { BASE_URL } from "../../../apiurl";
 import { formatDate } from "../helpers/date.helper";
+import { toast } from "react-toastify";
 
 const Workout = ({ workout }) => {
   const { dispatch } = useWorkoutsContext();
   const { user } = useAuthContext();
 
   const handleDelete = async () => {
-    const response = await fetch(`${BASE_URL}/workouts/${workout._id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/workouts/${workout._id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error(data.error);
-    } else {
-      dispatch({ type: "DELETE_WORKOUT", payload: data });
+      dispatch({ type: "DELETE_WORKOUT", payload: response.data });
+      toast.success("Workout deleted successfully");
+    } catch (error) {
+      console.error(error.response?.data?.error || error.message);
     }
   };
 

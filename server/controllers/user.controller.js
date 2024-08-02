@@ -2,15 +2,10 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
 const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
+  return jwt.sign({ _id }, "secretus", { expiresIn: "3d" });
 };
 
 const signup = async (req, res) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://fit-track-cli.vercel.app"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
   const { email, password } = req.body;
 
   try {
@@ -23,11 +18,6 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://fit-track-cli.vercel.app"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
   const { email, password } = req.body;
 
   try {
