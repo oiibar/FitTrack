@@ -16,23 +16,16 @@ app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
 });
-app.use(
-  cors({
-    origin: "https://fit-track-gamma.vercel.app",
-    // origin: "http://localhost:3000",
-    credentials: true,
-    optionsSuccessStatus: 200,
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-//https://fit-track-cli.vercel.app
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  console.log(req.path, req.method);
-  next();
-});
+const corsOptions = {
+    origin: "https://fit-track-gamma.vercel.app",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/user", userRoutes);
