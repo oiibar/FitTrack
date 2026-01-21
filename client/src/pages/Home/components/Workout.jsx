@@ -1,4 +1,3 @@
-import React from "react";
 import { FaTrash } from "react-icons/fa";
 import { useWorkoutsContext } from "../../../hooks/useWorkoutsContext";
 import { useAuthContext } from "../../../hooks/useAuthContext";

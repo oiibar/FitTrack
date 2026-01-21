@@ -1,88 +1,80 @@
-# Fit Track
+<h1 align="center" id="title">FitTrack</h1>
 
-A simple and user-friendly workout tracking application designed to
-record exercises, sets, reps, weights, and muscle groups. Built as a
-practice project for learning backend development with Express, routing,
-and later database integration.
+<p align="center"><img src="https://socialify.git.ci/oiibar/FitTrack/image?language=1&name=1&owner=1&pattern=Solid&theme=Light" alt="project-image"></p>
 
-------------------------------------------------------------------------
+<p id="description">This is an user-friendly simple application to keep track of your workout/exercises. I decided to build this project to have my personal app to keep track of my workout.</p>
 
-## Team Members
+<h2>🧐 Features</h2>
 
--   **Master** --- Software Engineering\
--   *(Add additional members or groups if needed)*
+Here're some of the project's best features:
 
-------------------------------------------------------------------------
+- CRUD operations
+- Save exercises:
+- Weight, sets x reps, title, type
+- Group exercises by muscle groups
 
-## Project Topic
+<h2>🛠️ Installation Steps:</h2>
 
-Fit Track is a lightweight workout tracker that allows users to log
-their exercises and view them in an organized way.\
-Future versions will include muscle-group categorization, data
-persistence, and a dashboard to visualize progress.
+<p>1. Clone the project</p>
 
-Built using **Node.js** + **Express**, and planned database integration
-(MongoDB or PostgreSQL).
+```
+git clone https://github.com/oiibar/FitTrack.git
+```
 
-------------------------------------------------------------------------
+<p>2. Navigate to the client folder</p>
 
-## Installation & Running the Project
+```
+cd FitTrack/client
+```
 
-1.  **Clone the repository**
+<p>3. Install client-side packages</p>
 
-    ``` bash
-    git clone https://github.com/oiibar/Backend_Final_Project.git
-    ```
+```
+npm i
+```
 
-2.  **Install dependencies**
+<p>4. Run the client</p>
 
-    ``` bash
-    npm install
-    ```
+```
+npm run dev
+```
 
-3.  **Start the server**
+<p>5. Navigate to the server folder</p>
 
-    ``` bash
-    node server.js
-    ```
+```
+cd FitTrack/server
+```
 
-4.  **Open in browser**
+<p>6. Install server-side packages</p>
 
-        http://localhost:3000
+```
+npm i
+```
 
-------------------------------------------------------------------------
+<p>7. Run the server</p>
 
-## Roadmap
+```
+npm run dev
+```
 
-### **Week 1 --- Basic Setup**
+<h2>💻 Built with</h2>
 
--   Create Express server\
--   Serve landing page\
--   Establish project structure (`views/`, `public/`, `routes/`)
+Technologies used in the project:
 
-### **Week 2 --- Form + POST Route**
+- MongoDB
+- ExpressJS
+- ReactJS
+- NodeJS
+- CRUD operations
+- TailwindCSS
 
--   Add form for submitting new exercises\
--   Create POST route to handle form submissions\
--   Display submitted exercises
+Here are some screenshots of the project:
 
-### **Week 3 --- Database Integration**
+<p align="center">
+  <img src="./previews/Auth.png" alt="Auth">
+  <img src="./previews/Main.png" alt="Main">
+</p>
 
--   Connect to MongoDB\
--   Create exercise model/schema\
--   Store and load exercise data persistently
+<h2>💖Like my work?</h2>
 
-### **Week 4 --- CRUD Features**
-
--   Add update and delete functionality\
--   Improve user interface for managing exercises\
--   Add muscle-group categorization
-
-### **Week 5 --- Dashboard & Final Polish**
-
--   Implement progress dashboard\
--   Add filtering and sorting features\
--   Enhance styling and navigation\
--   Finalize app for presentation
-
-------------------------------------------------------------------------
+Feel free to contact me<p><a href="contact-me-neon.vercel.app">contact-me-neon.vercel.app</a></p>
