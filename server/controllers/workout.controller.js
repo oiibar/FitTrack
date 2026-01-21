@@ -268,55 +268,66 @@ const updateWorkout = async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
+    const user_id = req.user._id;
 
     if (!ObjectId.isValid(id)) {
       return res.status(404).json({ error: "No such workout" });
     }
 
-    const result = await db.collection("workouts").findOneAndUpdate(
-        { _id: new ObjectId(id) },
+    const result = await db.collection("workouts").updateOne(
+        { _id: new ObjectId(id), user_id },
         {
           $set: {
             ...req.body,
-            updatedAt: new Date()
-          }
-        },
-        { returnDocument: "after" }
+            updatedAt: new Date(),
+          },
+        }
     );
 
-    if (!result.value) {
+    if (result.matchedCount === 0) {
       return res.status(404).json({ error: "No such workout" });
     }
 
-    res.status(200).json(result.value);
+    const updatedWorkout = await db.collection("workouts").findOne({
+      _id: new ObjectId(id),
+      user_id,
+    });
+
+    res.status(200).json(updatedWorkout);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 
 const deleteWorkout = async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
+    const user_id = req.user._id;
 
     if (!ObjectId.isValid(id)) {
       return res.status(404).json({ error: "No such workout" });
     }
 
-    const result = await db.collection("workouts").findOneAndDelete({
-      _id: new ObjectId(id)
+    const result = await db.collection("workouts").deleteOne({
+      _id: new ObjectId(id),
+      user_id,
     });
 
-    if (!result.value) {
+    if (result.deletedCount === 0) {
       return res.status(404).json({ error: "No such workout" });
     }
 
-    res.status(200).json(result.value);
+    res.status(200).json({ success: true, id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 export default {
   createWorkout,

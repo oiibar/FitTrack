@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useAuthContext } from "../../../hooks/useAuthContext";
-import { useWorkoutsContext } from "../../../hooks/useWorkoutsContext";
+import { useAuthContext } from "../../hooks/useAuthContext.js";
+import { useWorkoutsContext } from "../../hooks/useWorkoutsContext.js";
 import axios from "axios";
-import { BASE_URL } from "../../../apiurl";
+import { BASE_URL } from "../../apiurl.js";
 import { toast } from "react-toastify";
 
 const WorkoutForm = ({ onFormSubmit }) => {
@@ -15,7 +15,6 @@ const WorkoutForm = ({ onFormSubmit }) => {
     sets: "4",
     reps: "10",
   });
-  const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
 
   const handleChange = (e) => {
@@ -28,12 +27,10 @@ const WorkoutForm = ({ onFormSubmit }) => {
     const newEmptyFields = fields.filter((field) => !formState[field].trim());
     if (newEmptyFields.length) {
       setEmptyFields(newEmptyFields);
-      setError("Please fill in all required fields.");
       toast.error("Please fill in all required fields.");
       return false;
     }
     setEmptyFields([]);
-    setError(null);
     return true;
   };
 
@@ -53,13 +50,11 @@ const WorkoutForm = ({ onFormSubmit }) => {
       dispatch({ type: "ADD_WORKOUT", payload: response.data });
       toast.success("Workout added successfully");
       setFormState({ title: "", weight: "", type: "", sets: "", reps: "" });
-      setError(null);
       setEmptyFields([]);
       if (onFormSubmit) {
         onFormSubmit();
       }
     } catch (error) {
-      setError(error.response?.data?.error || error.message);
       setEmptyFields(error.response?.data?.emptyFields || []);
       toast.error("Login first to add a workout");
     }

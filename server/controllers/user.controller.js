@@ -14,32 +14,26 @@ const signup = async (req, res) => {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
-    // Validate password length
     if (password.length < 6) {
       return res.status(400).json({ error: "Password must be at least 6 characters long" });
     }
 
-    // Get fresh DB connection each time
     const db = await connectDB();
     const usersCollection = db.collection("users");
 
-    // Check if user exists
     const exists = await usersCollection.findOne({ email });
     if (exists) {
       return res.status(400).json({ error: "Email already in use" });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    // Create user
     const user = {
       email,
       password: hash,
@@ -47,13 +41,10 @@ const signup = async (req, res) => {
       updatedAt: new Date()
     };
 
-    // Insert user
     const result = await usersCollection.insertOne(user);
 
-    // Create token
     const token = createToken(result.insertedId.toString());
 
-    // Return response
     res.status(201).json({
       success: true,
       email,
@@ -84,14 +75,12 @@ const login = async (req, res) => {
       });
     }
 
-    // Get fresh DB connection each time
     const db = await connectDB();
     console.log("Database connected:", !!db);
 
     const usersCollection = db.collection("users");
     console.log("Collection accessed:", !!usersCollection);
 
-    // Find user
     const user = await usersCollection.findOne({ email });
     if (!user) {
       console.log("User not found:", email);
@@ -103,7 +92,6 @@ const login = async (req, res) => {
 
     console.log("User found, checking password...");
 
-    // Check password
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       console.log("Password mismatch for:", email);
@@ -115,10 +103,8 @@ const login = async (req, res) => {
 
     console.log("Password matched, creating token...");
 
-    // Create token
     const token = createToken(user._id.toString());
 
-    // Return response
     res.status(200).json({
       success: true,
       email,

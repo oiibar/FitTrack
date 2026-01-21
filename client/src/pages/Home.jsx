@@ -1,6 +1,7 @@
-import WorkoutList from "./components/WorkoutList";
-import WorkoutForm from "./components/WorkoutForm";
-import useWorkouts from "./hooks/useWorkouts";
+import WorkoutList from "../components/Workouts/WorkoutList.jsx";
+import WorkoutForm from "../components/Workouts/WorkoutForm.jsx";
+import useWorkouts from "../hooks/useWorkouts.js";
+import Modal from "../components/Modal/Modal.jsx";
 
 const Home = () => {
   const { workouts, loading, refetchWorkouts } = useWorkouts();
@@ -13,6 +14,7 @@ const Home = () => {
       ) : (
         <WorkoutList workouts={workouts} />
       )}
+        <Modal onUpdate={refetchWorkouts} />
     </div>
   );
 };

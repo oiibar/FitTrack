@@ -9,7 +9,6 @@ if (!MONGO_URI) {
     throw new Error('Please define the MONGO_URI environment variable');
 }
 
-// Use global variable to persist connection across serverless function executions
 let cached = global.mongo;
 
 if (!cached) {
@@ -36,13 +35,11 @@ export async function connectDB() {
 
     try {
         const { client, db } = await cached.promise;
-        // Verify connection
         await client.db().admin().ping();
         cached.db = db;
         console.log("MongoDB connected successfully");
         return db;
     } catch (error) {
-        // Reset connection on error
         cached.promise = null;
         console.error("Failed to connect to MongoDB:", error);
         throw error;

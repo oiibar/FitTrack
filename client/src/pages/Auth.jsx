@@ -1,4 +1,4 @@
-import AuthForm from "./AuthForm";
+import AuthForm from "../components/Auth/AuthForm.jsx";
 
 const Auth = ({ mode }) => {
   return (

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { useWorkoutsContext } from "../../../hooks/useWorkoutsContext";
-import { useAuthContext } from "../../../hooks/useAuthContext";
-import { BASE_URL } from "../../../apiurl";
+import { useWorkoutsContext } from "./useWorkoutsContext.js";
+import { useAuthContext } from "./useAuthContext.js";
+import { BASE_URL } from "../apiurl.js";
 
 const useWorkouts = () => {
   const { workouts, dispatch } = useWorkoutsContext();

@@ -1,4 +1,4 @@
-import Workout from "./Workout";
+import Workout from "./Workout.jsx";
 
 const WorkoutList = ({ workouts }) => {
   return (

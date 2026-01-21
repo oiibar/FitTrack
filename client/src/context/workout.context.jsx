@@ -8,6 +8,12 @@ export const workoutsReducer = (state, action) => {
       return {
         workouts: action.payload,
       };
+    case "UPDATE_WORKOUT":
+        return {
+            workouts: state.workouts.map((workout) =>
+                workout._id === action.payload._id ? action.payload : workout
+            ),
+        };
     case "CREATE_WORKOUT":
       return {
         workouts: [action.payload, ...state.workouts],
@@ -15,7 +21,7 @@ export const workoutsReducer = (state, action) => {
     case "DELETE_WORKOUT":
       return {
         workouts: state.workouts.filter(
-          (workout) => workout._id !== action.payload._id
+            (w) => w._id !== action.payload._id
         ),
       };
     default:
@@ -24,7 +30,7 @@ export const workoutsReducer = (state, action) => {
 };
 
 export const WorkoutsContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(workoutsReducer, { workouts: null });
+  const [state, dispatch] = useReducer(workoutsReducer, { workouts: [] });
 
   return (
     <WorkoutsContext.Provider value={{ ...state, dispatch }}>

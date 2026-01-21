@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { BASE_URL } from "../../apiurl";
+import { useAuthContext } from "./useAuthContext.js";
+import { BASE_URL } from "../apiurl.js";
 
 export const useAuth = (mode) => {
   const [error, setError] = useState(null);

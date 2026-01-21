@@ -16,7 +16,7 @@ router.get("/:id", getWorkout);
 
 router.post("/", createWorkout);
 
-router.patch("/:id", updateWorkout);
+router.put("/:id", updateWorkout);
 
 router.delete("/:id", deleteWorkout);
 
