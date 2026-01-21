@@ -15,8 +15,8 @@ export const useAuth = (mode) => {
     try {
       const url =
         mode === "signup"
-          ? `${BASE_URL}/user/signup`
-          : `${BASE_URL}/user/login`;
+          ? `${BASE_URL}/signup`
+          : `${BASE_URL}/login`;
       const response = await axios.post(url, { email, password });
 
       const data = response.data;
