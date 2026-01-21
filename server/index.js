@@ -11,21 +11,41 @@ import {connectDB} from "./db/mongo.js";
 
 const PORT = process.env.PORT || 4000;
 const app = express();
+
+const allowedOrigins = [
+    "https://fit-track-gamma.vercel.app",
+    "http://localhost:3000"
+];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    exposedHeaders: ["Content-Range", "X-Content-Range"],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
 });
-
-const corsOptions = {
-    origin: "https://fit-track-gamma.vercel.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/user", userRoutes);
@@ -34,6 +54,18 @@ app.use("/api/info", infoRoutes)
 app.use("/api/search", searchRoutes);
 app.use("/api/items", itemsRoutes);
 
+app.get("/", (req, res) => {
+    res.json({ message: "API is running" });
+});
+
+app.use((err, req, res, next) => {
+    if (err.message.includes('CORS')) {
+        res.status(403).json({ error: err.message });
+    } else {
+        next(err);
+    }
+});
+
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`Listening on port ${PORT}`);
@@ -41,18 +73,5 @@ connectDB().then(() => {
 }).catch((err) => {
     console.log(err);
 });
-
-// mongoose
-//   .connect(
-//       "mongodb+srv://quovein_db_user:rcFEmdlyJb4hMmzG@gym.ven5pd1.mongodb.net/?retryWrites=true&w=majority&appName=Gym"
-//   )
-//   .then(() => {
-//     app.listen(PORT, () => {
-//       console.log(`Listening on port ${PORT}`);
-//     });
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
 
 export default app;
