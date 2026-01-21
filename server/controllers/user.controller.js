@@ -48,8 +48,6 @@ const createToken = (_id) => {
 
 
 const signup = async (req, res) => {
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "*");
 
   const { email, password } = req.body;
 
@@ -92,8 +90,6 @@ const signup = async (req, res) => {
 
 
 const login = async (req, res) => {
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("Access-Control-Allow-Origin", "*");
 
   const { email, password } = req.body;
 
