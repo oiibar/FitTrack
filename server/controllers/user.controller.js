@@ -42,26 +42,45 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { connectDB } from "../db/mongo.js";
 
+// Initialize database connection once
+let db;
+(async () => {
+  try {
+    db = await connectDB();
+    console.log("Database connected in user controller");
+  } catch (error) {
+    console.error("Failed to connect to database:", error);
+  }
+})();
+
 const createToken = (_id) => {
-  return jwt.sign({ _id }, "secretus", { expiresIn: "3d" });
+  return jwt.sign({ _id }, process.env.JWT_SECRET || "secretus", { expiresIn: "3d" });
 };
 
-
 const signup = async (req, res) => {
-
   const { email, password } = req.body;
 
   try {
     if (!email || !password) {
-      throw new Error("Email and password are required");
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const db = await connectDB();
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters long" });
+    }
+
     const usersCollection = db.collection("users");
 
     const exists = await usersCollection.findOne({ email });
     if (exists) {
-      throw new Error("Email already in use");
+      return res.status(400).json({ error: "Email already in use" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -78,48 +97,49 @@ const signup = async (req, res) => {
 
     const token = createToken(result.insertedId.toString());
 
-    res.status(200).json({
+    res.status(201).json({
       email,
-      token
+      token,
+      id: result.insertedId
     });
 
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Signup error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
-
 const login = async (req, res) => {
-
   const { email, password } = req.body;
 
   try {
     if (!email || !password) {
-      throw new Error("Email and password are required");
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const db = await connectDB();
     const usersCollection = db.collection("users");
 
     const user = await usersCollection.findOne({ email });
     if (!user) {
-      throw new Error("Incorrect email");
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      throw new Error("Incorrect password");
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
     const token = createToken(user._id.toString());
 
     res.status(200).json({
       email,
-      token
+      token,
+      id: user._id
     });
 
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
