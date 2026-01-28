@@ -1,11 +1,17 @@
 import express from "express";
 import controllers from "../controllers/workout.controller.js";
-import { Auth } from "../middleware/Auth.js";
-const { createWorkout, getWorkouts, getWorkout, deleteWorkout, updateWorkout, searchWorkouts } =
+import { Auth } from "../middleware/auth.js";
+const { createWorkout,
+    getWorkouts,
+    getWorkout,
+    updateWorkout,
+    searchWorkouts,
+    addNotes,
+    softDeleteWorkout,
+    workoutStats } =
   controllers;
 
 const router = express.Router();
-
 router.use(Auth);
 
 router.get('/search', searchWorkouts);
@@ -18,6 +24,10 @@ router.post("/", createWorkout);
 
 router.put("/:id", updateWorkout);
 
-router.delete("/:id", deleteWorkout);
+router.patch("/:id/note", addNotes)
+
+router.get("/stats", workoutStats);
+
+router.delete("/:id", softDeleteWorkout);
 
 export default router;

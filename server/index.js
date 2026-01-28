@@ -4,8 +4,6 @@ import userRoutes from "./routes/user.routes.js";
 import cors from "cors";
 import contactRoutes from "./routes/contact.routes.js";
 import infoRoutes from "./routes/info.routes.js";
-import searchRoutes from "./routes/search.routes.js";
-import itemsRoutes from "./routes/items.routes.js";
 import { connectDB } from "./db/mongo.js";
 
 const PORT = process.env.PORT || 4000;
@@ -47,8 +45,6 @@ app.use("/api/workouts", workoutRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/info", infoRoutes);
-app.use("/api/search", searchRoutes);
-app.use("/api/items", itemsRoutes);
 
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", timestamp: new Date().toISOString() });

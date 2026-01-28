@@ -17,7 +17,8 @@ const Modal = ({ isOpen, onClose, workout }) => {
         reps: "",
     });
 
-    // Prefill form when workout changes
+    const [note, setNote] = useState(""); // New state for note
+
     useEffect(() => {
         if (workout) {
             setFormState({
@@ -54,10 +55,31 @@ const Modal = ({ isOpen, onClose, workout }) => {
 
             dispatch({ type: "UPDATE_WORKOUT", payload: response.data });
             toast.success("Workout updated");
-
-            onClose();
         } catch (error) {
             toast.error(error.response?.data?.error || "Update failed");
+        }
+    };
+
+    const handleAddNote = async () => {
+        if (!note || note.trim() === "") return toast.error("Note cannot be empty");
+
+        try {
+            await axios.patch(
+                `${BASE_URL}/workouts/${workout._id}/note`,
+                { note },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                }
+            );
+
+            dispatch({ type: "ADD_NOTE", payload: { workoutId: workout._id, note } });
+            toast.success("Note added");
+            setNote(""); // clear input
+        } catch (error) {
+            toast.error(error.response?.data?.error || "Failed to add note");
         }
     };
 
@@ -69,15 +91,32 @@ const Modal = ({ isOpen, onClose, workout }) => {
             >
                 <h2 className="text-xl font-bold text-green-400">Edit Workout</h2>
 
-                <input name="title" value={formState.title} onChange={handleChange} />
-                <input name="weight" value={formState.weight} onChange={handleChange} />
-                <input name="type" value={formState.type} onChange={handleChange} />
-                <input name="sets" value={formState.sets} onChange={handleChange} />
-                <input name="reps" value={formState.reps} onChange={handleChange} />
+                <input name="title" value={formState.title} onChange={handleChange} placeholder="Title" />
+                <input name="weight" value={formState.weight} onChange={handleChange} placeholder="Weight" />
+                <input name="type" value={formState.type} onChange={handleChange} placeholder="Type" />
+                <input name="sets" value={formState.sets} onChange={handleChange} placeholder="Sets" />
+                <input name="reps" value={formState.reps} onChange={handleChange} placeholder="Reps" />
+
+                {/* Add Notes Section */}
+                <div className="flex gap-2 text-white">
+                    <input
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Add a note"
+                        className="flex-1 p-2 rounded bg-slate-700 text-white"
+                    />
+                    <button
+                        type="button"
+                        onClick={handleAddNote}
+                        className="btn btn-green"
+                    >
+                        Add Note
+                    </button>
+                </div>
 
                 <div className="flex gap-2 mt-4 text-white">
                     <button type="submit" className="btn btn-green w-full">
-                        Save
+                        Save Workout
                     </button>
                     <button
                         type="button"

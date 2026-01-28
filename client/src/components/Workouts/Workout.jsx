@@ -44,7 +44,23 @@ const Workout = ({ workout }) => {
         <strong>Type: </strong>
         {workout.type}
       </p>
-      <p>{formatDate(workout.createdAt)}</p>
+        <p>
+            <strong>Notes:</strong>
+        </p>
+        {workout.notes && workout.notes.length > 0 ? (
+            <ul className="ml-4 list-disc space-y-1">
+                {workout.notes.flat().map((note, index) => (
+                    <li key={index} className="text-gray-200">
+                        {note}
+                    </li>
+                ))}
+            </ul>
+        ) : (
+            <p className="text-gray-400 ml-2">No notes yet.</p>
+        )}
+
+
+        <p>{formatDate(workout.createdAt)}</p>
           <button onClick={handleDelete} className="btn btn-red">
               <FaTrash />
           </button>

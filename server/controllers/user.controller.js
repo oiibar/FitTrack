@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { connectDB } from "../db/mongo.js";
 
 const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.JWT_SECRET || "secretus", { expiresIn: "3d" });
+  return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
 };
 
 const signup = async (req, res) => {
