@@ -106,6 +106,7 @@ Backend:
 
 <h2>💻 Database Schema Description</h2>
 <h3>Users Collection</h3>
+
 ```
 {
     "_id": "ObjectId",
@@ -115,6 +116,7 @@ Backend:
 ```
 
 <h3>Workouts Collection</h3>
+
 ```
 {
     "_id": "ObjectId",
@@ -135,23 +137,28 @@ Backend:
 ```
 
 - Notes are stored as an embedded array
+- 
 - ```deleted``` flag enables soft delete
+- 
 - Each workout belongs to a user
 
 
 
 <h2>💻 MongoDB Queries</h2>
 <h3>Create Workout</h3>
+
 ```
 db.workouts.insertOne(workout)
 ```
 
 <h3>Read Workouts</h3>
+
 ```
 db.workouts.find({ user_id, deleted: { $ne: true } })
 ```
 
 <h3>Update Workouts</h3>
+
 ```
 db.workouts.updateOne(
   { _id, user_id },
@@ -160,6 +167,7 @@ db.workouts.updateOne(
 ```
 
 <h3>Add Note</h3>
+
 ```
 db.workouts.updateOne(
   { _id, user_id },
@@ -168,6 +176,7 @@ db.workouts.updateOne(
 ```
 
 <h3>Soft Delete</h3>
+
 ```
 db.workouts.updateOne(
   { _id, user_id },
@@ -179,6 +188,7 @@ db.workouts.updateOne(
 
 <h2>💻 Aggregation Pipeline</h2>
 <h3>Workout Statistics by Type</h3>
+
 ```
 db.workouts.aggregate([
   { $match: { user_id, deleted: { $ne: true } } },
@@ -209,6 +219,7 @@ db.workouts.aggregate([
 | GET    | `/api/workouts/stats`    | Workout statistics  |
 
 <h4>Add Note Example</h4>
+
 ```
 PATCH /api/workouts/:id/note
 Authorization: Bearer <token>
