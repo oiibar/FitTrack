@@ -137,9 +137,9 @@ Backend:
 ```
 
 - Notes are stored as an embedded array
-- 
+
 - ```deleted``` flag enables soft delete
-- 
+
 - Each workout belongs to a user
 
 
