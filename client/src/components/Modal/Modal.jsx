@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext.js";
 import { useWorkoutsContext } from "../../hooks/useWorkoutsContext.js";
 import axios from "axios";
-import { BASE_URL } from "../../apiurl.js";
+import { BASE_URL } from "../../api/api.js";
 import { toast } from "react-toastify";
 
 const Modal = ({ isOpen, onClose, workout }) => {
@@ -54,7 +54,7 @@ const Modal = ({ isOpen, onClose, workout }) => {
             );
 
             dispatch({ type: "UPDATE_WORKOUT", payload: response.data });
-            toast.success("Workout updated");
+            toast.success("WorkoutItem updated");
         } catch (error) {
             toast.error(error.response?.data?.error || "Update failed");
         }

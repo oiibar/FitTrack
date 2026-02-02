@@ -3,7 +3,7 @@ import WorkoutForm from "../components/Workouts/WorkoutForm.jsx";
 import useWorkouts from "../hooks/useWorkouts.js";
 import Modal from "../components/Modal/Modal.jsx";
 
-const Home = () => {
+const WorkoutsPage = () => {
   const { workouts, loading, refetchWorkouts } = useWorkouts();
 
   return (
@@ -19,4 +19,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default WorkoutsPage;

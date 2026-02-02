@@ -1,35 +1,31 @@
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { useState } from "react";
 import { useWorkoutsContext } from "../../hooks/useWorkoutsContext.js";
-import { useAuthContext } from "../../hooks/useAuthContext.js";
-import axios from "axios";
-import { BASE_URL } from "../../apiurl.js";
+import {api} from "../../api/api.js";
 import { formatDate } from "../../helpers/date.helper.ts";
 import { toast } from "react-toastify";
 import Modal from "../Modal/Modal.jsx";
 
-const Workout = ({ workout }) => {
+const WorkoutItem = ({ workout }) => {
     const { dispatch } = useWorkoutsContext();
-    const { user } = useAuthContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleDelete = async () => {
-      dispatch({ type: "DELETE_WORKOUT", payload: workout });
+    const handleDelete = async () => {
+        try {
+            await api.delete(`/workouts/${workout._id}`);
+            dispatch({ type: "DELETE_WORKOUT", payload: workout });
+            toast.success("Workout deleted");
+        } catch (error) {
+            if (error.response?.status === 401) {
+                toast.error("Session expired. Please log in again.");
+            } else {
+                toast.error("Delete failed");
+            }
+        }
+    };
 
-      try {
-          await axios.delete(`${BASE_URL}/workouts/${workout._id}`, {
-              headers: {
-                  Authorization: `Bearer ${user.token}`,
-              },
-          });
 
-          toast.success("Workout deleted");
-      } catch (error) {
-          toast.error(error.response?.data?.error || "Delete failed");
-      }
-  };
-
-  return (
+    return (
     <div className="flex flex-col w-full sm:w-1/4 gap-2 p-4 bg-slate-800 rounded-md">
       <h4 className="text-green-400 font-bold text-xl">{workout.title}</h4>
       <p>
@@ -79,4 +75,4 @@ const Workout = ({ workout }) => {
   );
 };
 
-export default Workout;
+export default WorkoutItem;

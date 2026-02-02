@@ -1,10 +1,6 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { connectDB } from "../db/mongo.js";
-
-const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
-};
+import {ObjectId} from "mongodb";
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -32,24 +28,22 @@ const signup = async (req, res) => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = {
-      email,
-      password: hash,
+      email: email,
+      password: hashedPassword,
       createdAt: new Date(),
       updatedAt: new Date()
     };
 
     const result = await usersCollection.insertOne(user);
-
-    const token = createToken(result.insertedId.toString());
+    req.session.userId = new ObjectId(result.insertedId);
 
     res.status(201).json({
       success: true,
       email,
-      token,
-      id: result.insertedId
+      id: new ObjectId(result.insertedId)
     });
 
   } catch (error) {
@@ -66,8 +60,6 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    console.log("Login attempt for:", email);
-
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -76,11 +68,7 @@ const login = async (req, res) => {
     }
 
     const db = await connectDB();
-    console.log("Database connected:", !!db);
-
     const usersCollection = db.collection("users");
-    console.log("Collection accessed:", !!usersCollection);
-
     const user = await usersCollection.findOne({ email });
     if (!user) {
       console.log("User not found:", email);
@@ -89,8 +77,6 @@ const login = async (req, res) => {
         error: "Invalid email or password"
       });
     }
-
-    console.log("User found, checking password...");
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
@@ -101,15 +87,12 @@ const login = async (req, res) => {
       });
     }
 
-    console.log("Password matched, creating token...");
-
-    const token = createToken(user._id.toString());
+    req.session.userId = user._id;
 
     res.status(200).json({
       success: true,
       email,
-      token,
-      id: user._id
+      id: new ObjectId(user._id)
     });
 
   } catch (error) {
@@ -122,7 +105,49 @@ const login = async (req, res) => {
   }
 };
 
+const me = async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const db = await connectDB();
+    const user = await db.collection("users").findOne(
+        { _id: new ObjectId(req.session.userId) },
+        { projection: { password: 0 } }
+    );
+
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    res.status(200).json({
+      id: user._id,
+      email: user.email,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+const logout = async (req, res) => {
+    try {
+        req.session.destroy();
+        res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Logout error details:", error);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error",
+        message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+}
+
 export default {
   signup,
   login,
+  me,
+  logout
 };

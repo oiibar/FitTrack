@@ -5,7 +5,7 @@ import { connectDB } from "../db/mongo.js";
 const getWorkouts = async (req, res) => {
   try {
     const db = await connectDB();
-    const user_id = req.user._id;
+    const user_id = new ObjectId(req.user._id);
 
     const workouts = await db
         .collection("workouts")
@@ -23,7 +23,7 @@ const addNotes = async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
-    const user_id = req.user._id;
+    const user_id = new ObjectId(req.user._id);
     const { note } = req.body;
 
     if (!note) {
@@ -41,7 +41,7 @@ const addNotes = async (req, res) => {
     );
 
     if (result.matchedCount === 0) {
-      return res.status(404).json({ error: "Workout not found" });
+      return res.status(404).json({ error: "WorkoutItem not found" });
     }
 
     res.status(200).json({ success: true });
@@ -61,7 +61,7 @@ const getWorkout = async (req, res) => {
 
     const workout = await db.collection("workouts").findOne({
       _id: new ObjectId(id),
-      user_id: req.user._id,
+      user_id: new ObjectId(req.user._id),
       deleted: { $ne: true }
     });
 
@@ -78,7 +78,7 @@ const getWorkout = async (req, res) => {
 const searchWorkouts = async (req, res) => {
   try {
     const db = await connectDB();
-    const user_id = req.user._id;
+    const user_id = new ObjectId(req.user._id);
     const { q, type } = req.query;
 
     const query = { user_id };
@@ -132,7 +132,7 @@ const createWorkout = async (req, res) => {
 
   try {
     const db = await connectDB();
-    const user_id = req.user._id;
+    const user_id = new ObjectId(req.user._id);
 
     const workout = {
       title,
@@ -165,7 +165,7 @@ const updateWorkout = async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
-    const user_id = req.user._id;
+    const user_id = new ObjectId(req.user._id);
 
     if (!ObjectId.isValid(id)) {
       return res.status(404).json({ error: "No such workout" });
@@ -199,7 +199,7 @@ const updateWorkout = async (req, res) => {
 const workoutStats = async (req, res) => {
   try {
     const db = await connectDB();
-    const user_id = req.user._id;
+    const user_id = new ObjectId(req.user._id);
 
     const stats = await db.collection("workouts").aggregate([
       { $match: { user_id, deleted: { $ne: true } } },
@@ -232,7 +232,7 @@ const softDeleteWorkout = async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
-    const user_id = req.user._id;
+    const user_id = new ObjectId(req.user._id);
 
     const result = await db.collection("workouts").updateOne(
         { _id: new ObjectId(id), user_id },

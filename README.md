@@ -64,7 +64,7 @@ npm run dev
 
 <h3>Here are some screenshots of the project:</h3>
 <p align="center">
-  <img src="./previews/Auth.png" alt="Auth">
+  <img src="./previews/Auth.png" alt="AuthPage">
   <img src="./previews/Main.png" alt="Main">
 </p>
 
@@ -145,7 +145,7 @@ Backend:
 
 
 <h2>💻 MongoDB Queries</h2>
-<h3>Create Workout</h3>
+<h3>Create WorkoutItem</h3>
 
 ```
 db.workouts.insertOne(workout)
@@ -187,7 +187,7 @@ db.workouts.updateOne(
 
 
 <h2>💻 Aggregation Pipeline</h2>
-<h3>Workout Statistics by Type</h3>
+<h3>WorkoutItem Statistics by Type</h3>
 
 ```
 db.workouts.aggregate([
@@ -216,7 +216,7 @@ db.workouts.aggregate([
 | PUT    | `/api/workouts/:id`      | Update workout      |
 | DELETE | `/api/workouts/:id`      | Soft delete workout |
 | PATCH  | `/api/workouts/:id/note` | Add note            |
-| GET    | `/api/workouts/stats`    | Workout statistics  |
+| GET    | `/api/workouts/stats`    | WorkoutItem statistics  |
 
 <h4>Add Note Example</h4>
 

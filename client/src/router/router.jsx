@@ -1,23 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "../pages/Layout";
+import LayoutPage from "../pages/LayoutPage.jsx";
 import ErrorPage from "../pages/ErrorPage";
-import Auth from "../pages/Auth.jsx";
-import Home from "../pages/Home.jsx";
-import ContactPage from "../pages/Contact.jsx";
+import AuthPage from "../pages/AuthPage.jsx";
+import WorkoutsPage from "../pages/WorkoutsPage.jsx";
+import ContactPage from "../pages/ContactPage.jsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <LayoutPage />,
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <WorkoutsPage />,
       },
       {
         path: "login",
-        element: <Auth mode="login" />,
+        element: <AuthPage mode="login" />,
       },
         {
             path: "contact",
@@ -25,7 +25,7 @@ export const router = createBrowserRouter([
         },
       {
         path: "signup",
-        element: <Auth mode="signup" />,
+        element: <AuthPage mode="signup" />,
       },
     ],
   },

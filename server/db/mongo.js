@@ -25,7 +25,7 @@ export async function connectDB() {
         }).then((client) => {
             return {
                 client,
-                db: client.db("gym"),
+                db: client.db("FitTrack"),
             };
         });
     }

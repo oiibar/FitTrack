@@ -14,7 +14,7 @@ export const workoutsReducer = (state, action) => {
                 workout._id === action.payload._id ? action.payload : workout
             ),
         };
-    case "CREATE_WORKOUT":
+    case "ADD_WORKOUT":
       return {
         workouts: [action.payload, ...state.workouts],
       };

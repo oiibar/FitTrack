@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext.js";
 import { useWorkoutsContext } from "../../hooks/useWorkoutsContext.js";
-import axios from "axios";
-import { BASE_URL } from "../../apiurl.js";
+import {api} from "../../api/api.js";
 import { toast } from "react-toastify";
 
 const WorkoutForm = ({ onFormSubmit }) => {
   const { dispatch } = useWorkoutsContext();
-  const { user } = useAuthContext();
   const [formState, setFormState] = useState({
     title: "Bench Press",
     weight: "80",
@@ -40,24 +37,25 @@ const WorkoutForm = ({ onFormSubmit }) => {
     if (!validateForm()) return;
 
     try {
-      const response = await axios.post(`${BASE_URL}/workouts`, formState, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const response = await api.post('/workouts', formState);
 
       dispatch({ type: "ADD_WORKOUT", payload: response.data });
-      toast.success("Workout added successfully");
+      toast.success("WorkoutItem added successfully");
       setFormState({ title: "", weight: "", type: "", sets: "", reps: "" });
       setEmptyFields([]);
       if (onFormSubmit) {
         onFormSubmit();
       }
     } catch (error) {
+      if (error.response?.status === 401) {
+        toast.error("You must be logged in to add a workout");
+      } else {
+        toast.error("Failed to add workout");
+      }
+
       setEmptyFields(error.response?.data?.emptyFields || []);
-      toast.error("Login first to add a workout");
     }
+
   };
 
   const fieldLabels = {

@@ -5,8 +5,13 @@ import cors from "cors";
 import contactRoutes from "./routes/contact.routes.js";
 import infoRoutes from "./routes/info.routes.js";
 import { connectDB } from "./db/mongo.js";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import dotenv from "dotenv";
+dotenv.config();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 const app = express();
 
 const allowedOrigins = [
@@ -30,8 +35,25 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 app.options("*", cors(corsOptions));
+
+app.use(cookieParser());
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'default_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: 'sessions'
+    }),
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax'
+    }
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -49,26 +71,8 @@ app.use("/api/info", infoRoutes);
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
-
 app.get("/api/test-cors", (req, res) => {
     res.json({ message: "CORS test successful", origin: req.headers.origin });
-});
-
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-
-    if (err.message.includes('CORS')) {
-        return res.status(403).json({
-            error: "CORS Error",
-            message: err.message,
-            allowedOrigins
-        });
-    }
-
-    res.status(500).json({
-        error: "Internal Server Error",
-        message: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
 });
 
 app.use((req, res) => {

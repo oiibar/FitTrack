@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { BASE_URL } from "../apiurl";
+import { BASE_URL } from "../api/api.js";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { toast } from "react-toastify";
 

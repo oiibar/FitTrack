@@ -1,49 +1,36 @@
 import { FaDumbbell } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { memo, useState } from "react";
-import { useLogout } from "./useLogout";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { BASE_URL } from "../apiurl.js";
+import {useEffect} from "react";
+import { useLogout } from "./useLogout.js";
+import { useAuthContext } from "../../hooks/useAuthContext.js";
+import {api} from "../../api/api.js";
 
 const Header = () => {
     const { logout } = useLogout();
-    const { user } = useAuthContext();
-    const [loading, setLoading] = useState(false);
+    const { user, loading } = useAuthContext();
+    useEffect(() => {
+        console.log("Auth state:", { user, loading });
+    }, [user, loading]);
 
     const getInfo = async () => {
-        setLoading(true);
-
         try {
-            const response = await fetch(`${BASE_URL}/info`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await api.get("/info");
 
-            const data = await response.json();
+            const data = response.data;
 
-            if (response.ok) {
-                alert("Server Info retrieved successfully:");
+            alert("Server Info retrieved successfully:");
 
-                console.log(`
-                    Server Information:
-                    Name: ${data.data.name}
-                    Version: ${data.data.version}
-                    Status: ${data.data.status}
-                    Environment: ${data.data.environment}
-                    Timestamp: ${new Date(data.data.timestamp).toLocaleString()}
-                `);
-
-            } else {
-                console.error("Server error:", data.error);
-                alert(`Error: ${data.error || "Failed to fetch server info"}`);
-            }
+            console.log(`
+      Server Information:
+      Name: ${data.data.name}
+      Version: ${data.data.version}
+      Status: ${data.data.status}
+      Environment: ${data.data.environment}
+      Timestamp: ${new Date(data.data.timestamp).toLocaleString()}
+    `);
         } catch (error) {
-            console.error("Network error:", error);
-            alert("Network error. Please check your connection.");
-        } finally {
-            setLoading(false);
+            console.error("Server error:", error.response?.data || error.message);
+            alert(error.response?.data?.error || "Failed to fetch server info");
         }
     };
 
@@ -92,4 +79,4 @@ const Header = () => {
     );
 };
 
-export default memo(Header);
+export default Header;

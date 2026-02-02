@@ -1,7 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
-import { useAuthContext } from "./useAuthContext.js";
-import { BASE_URL } from "../apiurl.js";
+import { useAuthContext } from "./useAuthContext";
+import { api } from "../api/api";
 
 export const useAuth = (mode) => {
   const [error, setError] = useState(null);
@@ -13,19 +12,14 @@ export const useAuth = (mode) => {
     setError(null);
 
     try {
-      const url =
-        mode === "signup"
-          ? `${BASE_URL}/user/signup`
-          : `${BASE_URL}/user/login`;
-      const response = await axios.post(url, { email, password });
+      const url = mode === "signup" ? "/user/signup" : "/user/login";
+      const res = await api.post(url, { email, password });
 
-      const data = response.data;
-      localStorage.setItem("user", JSON.stringify(data));
-      dispatch({ type: "LOGIN", payload: data });
+      dispatch({ type: "LOGIN", payload: res.data });
 
       return true;
-    } catch (error) {
-      setError(error.response?.data?.error || error.message);
+    } catch (err) {
+      setError(err.response?.data?.error || "Authentication failed");
       return false;
     } finally {
       setIsLoading(false);
