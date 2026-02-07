@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 const AuthForm = ({ mode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [adminCode, setAdminCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const { authenticate, isLoading, error } = useAuth(mode);
@@ -16,7 +17,7 @@ const AuthForm = ({ mode }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const success = await authenticate(email, password);
+      const success = await authenticate(email, password, adminCode);
       if (success) {
         setSuccessMessage(
           `Successfully ${mode === "signup" ? "signed up" : "logged in"}`
@@ -67,6 +68,17 @@ const AuthForm = ({ mode }) => {
           {showPassword ? <FaEyeSlash /> : <FaEye />}
         </span>
       </div>
+      {mode === "signup" && (
+        <div>
+          <input
+            onChange={(e) => setAdminCode(e.target.value)}
+            value={adminCode}
+            type="text"
+            className="input"
+            placeholder="Admin Code (optional)"
+          />
+        </div>
+      )}
       <button disabled={isLoading} className="btn btn-green mx-auto">
         {mode === "signup" ? "Submit" : "Login"}
       </button>

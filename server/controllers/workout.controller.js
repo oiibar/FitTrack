@@ -6,10 +6,15 @@ const getWorkouts = async (req, res) => {
   try {
     const db = await connectDB();
     const user_id = new ObjectId(req.user._id);
+    const isAdmin = String(req.user.role || '').toLowerCase() === 'admin';
+
+    const query = isAdmin
+      ? { deleted: { $ne: true } }
+      : { user_id, deleted: { $ne: true } };
 
     const workouts = await db
         .collection("workouts")
-        .find({ user_id, deleted: { $ne: true } })
+        .find(query)
         .sort({ createdAt: -1 })
         .toArray();
 
@@ -24,14 +29,18 @@ const addNotes = async (req, res) => {
     const db = await connectDB();
     const { id } = req.params;
     const user_id = new ObjectId(req.user._id);
+    const isAdmin = String(req.user.role || '').toLowerCase() === 'admin';
     const { note } = req.body;
 
     if (!note) {
       return res.status(400).json({ error: "Note cannot be empty" });
     }
 
+    const filter = { _id: new ObjectId(id) };
+    if (!isAdmin) filter.user_id = user_id;
+
     const result = await db.collection("workouts").updateOne(
-        { _id: new ObjectId(id), user_id },
+        filter,
         {
           $push: {
             notes: note
@@ -59,11 +68,11 @@ const getWorkout = async (req, res) => {
       return res.status(404).json({ error: "No such workout" });
     }
 
-    const workout = await db.collection("workouts").findOne({
-      _id: new ObjectId(id),
-      user_id: new ObjectId(req.user._id),
-      deleted: { $ne: true }
-    });
+    const isAdmin = String(req.user.role || '').toLowerCase() === 'admin';
+    const filter = { _id: new ObjectId(id), deleted: { $ne: true } };
+    if (!isAdmin) filter.user_id = new ObjectId(req.user._id);
+
+    const workout = await db.collection("workouts").findOne(filter);
 
     if (!workout) {
       return res.status(404).json({ error: "No such workout" });
@@ -80,8 +89,9 @@ const searchWorkouts = async (req, res) => {
     const db = await connectDB();
     const user_id = new ObjectId(req.user._id);
     const { q, type } = req.query;
+    const isAdmin = String(req.user.role || '').toLowerCase() === 'admin';
 
-    const query = { user_id };
+    const query = isAdmin ? { deleted: { $ne: true } } : { user_id };
 
     if (q && q.trim() !== "") {
       query.$or = [
@@ -92,6 +102,8 @@ const searchWorkouts = async (req, res) => {
     if (type && type.trim() !== "") {
       query.type = { $regex: type, $options: "i" };
     }
+
+    if (!query.deleted) query.deleted = { $ne: true };
 
     const workouts = await db
         .collection("workouts")
@@ -171,8 +183,12 @@ const updateWorkout = async (req, res) => {
       return res.status(404).json({ error: "No such workout" });
     }
 
+    const isAdmin = String(req.user.role || '').toLowerCase() === 'admin';
+    const filter = { _id: new ObjectId(id) };
+    if (!isAdmin) filter.user_id = user_id;
+
     const result = await db.collection("workouts").updateOne(
-        { _id: new ObjectId(id), user_id },
+        filter,
         {
           $set: {
             ...req.body,
@@ -187,7 +203,6 @@ const updateWorkout = async (req, res) => {
 
     const updatedWorkout = await db.collection("workouts").findOne({
       _id: new ObjectId(id),
-      user_id,
     });
 
     res.status(200).json(updatedWorkout);
@@ -200,9 +215,13 @@ const workoutStats = async (req, res) => {
   try {
     const db = await connectDB();
     const user_id = new ObjectId(req.user._id);
+    const isAdmin = String(req.user.role || '').toLowerCase() === 'admin';
+
+    // Admin can see stats for all workouts; regular users see their own stats
+    const matchStage = isAdmin ? { deleted: { $ne: true } } : { user_id, deleted: { $ne: true } };
 
     const stats = await db.collection("workouts").aggregate([
-      { $match: { user_id, deleted: { $ne: true } } },
+      { $match: matchStage },
       {
         $group: {
           _id: "$type",
@@ -234,8 +253,12 @@ const softDeleteWorkout = async (req, res) => {
     const { id } = req.params;
     const user_id = new ObjectId(req.user._id);
 
+    const isAdmin = String(req.user.role || '').toLowerCase() === 'admin';
+    const filter = { _id: new ObjectId(id) };
+    if (!isAdmin) filter.user_id = user_id;
+
     const result = await db.collection("workouts").updateOne(
-        { _id: new ObjectId(id), user_id },
+        filter,
         {
           $set: { deleted: true, updatedAt: new Date() }
         }

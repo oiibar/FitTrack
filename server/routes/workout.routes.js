@@ -1,6 +1,7 @@
 import express from "express";
 import controllers from "../controllers/workout.controller.js";
 import { Auth } from "../middleware/auth.js";
+import { ensureOwnership } from "../middleware/authRole.js";
 const { createWorkout,
     getWorkouts,
     getWorkout,
@@ -18,16 +19,16 @@ router.get('/search', searchWorkouts);
 
 router.get("/", getWorkouts);
 
-router.get("/:id", getWorkout);
+router.get("/stats", workoutStats);
+
+router.get("/:id", ensureOwnership({ collection: 'workouts', idParam: 'id', allowAdmin: true }), getWorkout);
 
 router.post("/", createWorkout);
 
-router.put("/:id", updateWorkout);
+router.put("/:id", ensureOwnership({ collection: 'workouts', idParam: 'id', allowAdmin: true }), updateWorkout);
 
-router.patch("/:id/note", addNotes)
+router.patch("/:id/note", ensureOwnership({ collection: 'workouts', idParam: 'id', allowAdmin: true }), addNotes)
 
-router.get("/stats", workoutStats);
-
-router.delete("/:id", softDeleteWorkout);
+router.delete("/:id", ensureOwnership({ collection: 'workouts', idParam: 'id', allowAdmin: true }), softDeleteWorkout);
 
 export default router;

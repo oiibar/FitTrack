@@ -51,10 +51,8 @@ app.use(session({
     cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
         httpOnly: true,
-        // secure: process.env.NODE_ENV === 'production',
-        // sameSite: 'Lax'
-        secure: true,
-        sameSite: 'none'
+        secure: false, // true in production
+        sameSite: 'lax' // 'none' in production
     }
 }));
 
@@ -82,5 +80,13 @@ app.use((req, res) => {
     res.status(404).json({ error: "Route not found" });
 });
 
-await connectDB();
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+        console.log(`Allowed origins: ${allowedOrigins.join(", ")}`);
+    });
+}).catch((err) => {
+    console.error("Failed to connect to database:", err);
+    process.exit(1);
+});
 export default app;

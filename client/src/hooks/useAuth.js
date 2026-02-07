@@ -7,13 +7,14 @@ export const useAuth = (mode) => {
   const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useAuthContext();
 
-  const authenticate = async (email, password) => {
+  const authenticate = async (email, password, adminCode) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const url = mode === "signup" ? "/user/signup" : "/user/login";
-      const res = await api.post(url, { email, password });
+      const payload = mode === "signup" ? { email, password, adminCode } : { email, password };
+      const res = await api.post(url, payload);
 
       dispatch({ type: "LOGIN", payload: res.data });
 
@@ -28,3 +29,5 @@ export const useAuth = (mode) => {
 
   return { authenticate, isLoading, error };
 };
+
+export default useAuth;

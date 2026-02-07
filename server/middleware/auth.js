@@ -10,7 +10,7 @@ export const Auth = async (req, res, next) => {
     const db = await connectDB();
     const user = await db.collection("users").findOne(
         { _id: new ObjectId(req.session.userId) },
-        { projection: { _id: 1, email: 1 } }
+        { projection: { _id: 1, email: 1, role: 1 } }
     );
 
     if (!user) {
@@ -19,7 +19,8 @@ export const Auth = async (req, res, next) => {
 
     req.user = {
       _id: new ObjectId(user._id),
-      email: user.email
+      email: user.email,
+      role: user.role || 'user'
     };
 
     next();

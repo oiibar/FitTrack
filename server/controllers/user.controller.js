@@ -3,7 +3,7 @@ import { connectDB } from "../db/mongo.js";
 import {ObjectId} from "mongodb";
 
 const signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, adminCode } = req.body;
 
   try {
     if (!email || !password) {
@@ -30,9 +30,16 @@ const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Determine role. Only server decides role; client cannot set arbitrary roles.
+    let role = 'user';
+    if (adminCode && process.env.ADMIN_CODE && adminCode === process.env.ADMIN_CODE) {
+      role = 'admin';
+    }
+
     const user = {
       email: email,
       password: hashedPassword,
+      role,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -43,7 +50,8 @@ const signup = async (req, res) => {
     res.status(201).json({
       success: true,
       email,
-      id: new ObjectId(result.insertedId)
+      id: new ObjectId(result.insertedId),
+      role
     });
 
   } catch (error) {
@@ -92,7 +100,8 @@ const login = async (req, res) => {
     res.status(200).json({
       success: true,
       email,
-      id: new ObjectId(user._id)
+      id: new ObjectId(user._id),
+      role: user.role || 'user'
     });
 
   } catch (error) {
@@ -124,12 +133,49 @@ const me = async (req, res) => {
     res.status(200).json({
       id: user._id,
       email: user.email,
+      role: user.role || 'user'
     });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
 };
 
+// Admin-only: list all users (without passwords)
+const listUsers = async (req, res) => {
+  try {
+    const db = await connectDB();
+    const users = await db.collection('users').find({}, { projection: { password: 0 } }).toArray();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('listUsers error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Admin-only: change user's role
+const promoteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body; // expected 'user' or 'admin'
+
+    if (!ObjectId.isValid(id)) return res.status(404).json({ error: 'User not found' });
+    if (!role || (role !== 'user' && role !== 'admin')) return res.status(400).json({ error: 'Invalid role' });
+
+    const db = await connectDB();
+    const result = await db.collection('users').findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: { role, updatedAt: new Date() } },
+      { projection: { password: 0 }, returnDocument: 'after' }
+    );
+
+    if (!result.value) return res.status(404).json({ error: 'User not found' });
+
+    res.status(200).json(result.value);
+  } catch (error) {
+    console.error('promoteUser error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 const logout = async (req, res) => {
     try {
@@ -149,5 +195,7 @@ export default {
   signup,
   login,
   me,
-  logout
+  logout,
+  listUsers,
+  promoteUser
 };

@@ -5,10 +5,13 @@ import {api} from "../../api/api.js";
 import { formatDate } from "../../helpers/date.helper.ts";
 import { toast } from "react-toastify";
 import Modal from "../Modal/Modal.jsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const WorkoutItem = ({ workout }) => {
     const { dispatch } = useWorkoutsContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { user } = useAuthContext();
+    const isAdmin = user && String(user.role || '').toLowerCase() === 'admin';
 
     const handleDelete = async () => {
         try {
@@ -18,6 +21,8 @@ const WorkoutItem = ({ workout }) => {
         } catch (error) {
             if (error.response?.status === 401) {
                 toast.error("Session expired. Please log in again.");
+            } else if (error.response?.status === 403) {
+                toast.error("Forbidden: you don't have permission to delete this workout");
             } else {
                 toast.error("Delete failed");
             }
@@ -57,6 +62,9 @@ const WorkoutItem = ({ workout }) => {
 
 
         <p>{formatDate(workout.createdAt)}</p>
+        {isAdmin && (
+          <p className="text-sm text-gray-300">Owner: {workout.user_id ? String(workout.user_id) : 'unknown'}</p>
+        )}
           <button onClick={handleDelete} className="btn btn-red">
               <FaTrash />
           </button>
